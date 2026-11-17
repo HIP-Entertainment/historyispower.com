@@ -1,0 +1,32 @@
+# Server settings for historyispower.com on Hostinger (LiteSpeed reads this Apache-style file).
+# Deployed from GitHub together with the rest of the site. HTTPS itself is forced in hPanel (Security > SSL > Force HTTPS).
+
+Options -Indexes
+ErrorDocument 404 /404.html
+
+RewriteEngine On
+
+# www.historyispower.com -> https://historyispower.com (same page)
+RewriteCond %{HTTP_HOST} ^www\.historyispower\.com$ [NC]
+RewriteRule ^ https://historyispower.com%{REQUEST_URI} [L,R=301]
+
+# Hostinger's Git deployment puts the repo's .git folder in public_html: never serve it (or other dot-files except .well-known)
+RewriteRule (^|/)\.(?!well-known/) - [R=404,L]
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# Images rarely change: let browsers keep them a week. Pages, CSS and JS are re-checked every visit,
+# so a pushed update shows up straight away.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/png "access plus 7 days"
+  ExpiresByType image/svg+xml "access plus 7 days"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 0 seconds"
+  ExpiresByType text/javascript "access plus 0 seconds"
+</IfModule>
