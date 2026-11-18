@@ -29,4 +29,13 @@ RewriteRule (^|/)\.(?!well-known/) - [R=404,L]
   ExpiresByType text/css "access plus 0 seconds"
   ExpiresByType application/javascript "access plus 0 seconds"
   ExpiresByType text/javascript "access plus 0 seconds"
+  # Hostinger serves .js as application/x-javascript; without this line its CDN and browsers kept script.js for 7 days
+  ExpiresByType application/x-javascript "access plus 0 seconds"
+</IfModule>
+
+# Belt and braces for the same problem: pages and scripts are always re-checked, whatever type the server gives them.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|css|js)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
 </IfModule>
