@@ -1,15 +1,21 @@
 // ---------------------------------------------------------------------------
 // SITE SETTINGS: the only lines you need to change.
-//   web3formsKey  : access key from web3forms.com (sent to hipentr@gmail.com).
-//                   Empty = the contact form opens the visitor's email app instead.
+//   mailboxes     : the contact form's mailboxes (the picker buttons in index.html use the same names).
+//                   key = Web3Forms access key made for THAT address on web3forms.com, so messages land in it.
+//                   Empty key = picking that mailbox opens the visitor's email app addressed to it instead.
 //   cfBeaconToken : token from Cloudflare > Analytics & Logs > Web Analytics.
 //                   Empty = no analytics are loaded.
-// Both values are public by design (they are visible in the page source).
+// Keys and token are public by design (they are visible in the page source).
 // ---------------------------------------------------------------------------
 const SITE = {
-  web3formsKey: '',
+  mailboxes: {
+    support:  { email: 'support@historyispower.com',  label: 'Help and bugs',      key: '' },
+    feedback: { email: 'feedback@historyispower.com', label: 'Game feedback',      key: '' },
+    contact:  { email: 'contact@historyispower.com',  label: 'Business inquiries', key: '' },
+  },
+  defaultMailbox: 'feedback',
   cfBeaconToken: '',
-  contactEmail: 'hipentr@gmail.com',
+  contactEmail: 'contact@historyispower.com',
 };
 
 // Phone menu: the Menu button shows or hides the nav links.
@@ -69,37 +75,59 @@ if (SITE.cfBeaconToken) {
   document.head.appendChild(beacon);
 }
 
-// Contact form: sends through Web3Forms, or falls back to an email draft.
+// Contact form: the visitor picks a mailbox, then the form sends to it through Web3Forms,
+// or falls back to an email draft addressed to that mailbox.
 const form = document.getElementById('contact-form');
 
 if (form) {
   const status = form.querySelector('.form-status');
   const button = form.querySelector('button[type="submit"]');
+  const boxInput = form.querySelector('input[name="mailbox"]');
+  const chip = document.getElementById('to-chip');
+  const boxButtons = document.querySelectorAll('.mailbox[data-box]');
 
   const show = (kind, html) => {
     status.className = 'form-status wide' + (kind ? ' is-' + kind : '');
     status.innerHTML = html;
   };
-  const mailLink = '<a href="mailto:' + SITE.contactEmail + '">' + SITE.contactEmail + '</a>';
+  const mailLink = (email) => '<a href="mailto:' + email + '">' + email + '</a>';
+
+  const pickBox = (name) => {
+    if (!SITE.mailboxes[name]) name = SITE.defaultMailbox;
+    boxInput.value = name;
+    chip.textContent = SITE.mailboxes[name].email;
+    boxButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.box === name)));
+    show('', '');
+  };
+  boxButtons.forEach((b) => b.addEventListener('click', () => pickBox(b.dataset.box)));
+
+  // Links can preselect a mailbox: index.html?to=support#contact or index.html#contact-support
+  const fromHash = (location.hash.match(/^#contact-(\w+)$/) || [])[1];
+  const fromQuery = new URLSearchParams(location.search).get('to');
+  pickBox(fromQuery || fromHash || SITE.defaultMailbox);
+  if (fromHash) document.getElementById('contact').scrollIntoView();
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault(); // the browser has already checked the required fields
     const data = new FormData(form);
-    const topic = data.get('topic') || 'General question';
-    data.set('subject', 'Website message: ' + topic);
+    const boxName = SITE.mailboxes[data.get('mailbox')] ? data.get('mailbox') : SITE.defaultMailbox;
+    const box = SITE.mailboxes[boxName];
+    const subject = 'Website message: ' + box.label;
+    data.set('subject', subject);
 
     if (data.get('botcheck')) return; // spam trap ticked: quietly drop it
 
-    if (!SITE.web3formsKey) {
+    if (!box.key) {
       const body = data.get('message') + '\n\n' + data.get('name') + ' (' + data.get('email') + ')';
-      window.location.href = 'mailto:' + SITE.contactEmail +
-        '?subject=' + encodeURIComponent('Website message: ' + topic) +
+      window.location.href = 'mailto:' + box.email +
+        '?subject=' + encodeURIComponent(subject) +
         '&body=' + encodeURIComponent(body);
-      show('ok', 'Your email app should open with the message ready to send. If it doesn\'t, write to ' + mailLink + '.');
+      show('ok', 'Your email app should open with the message ready to send to ' + box.email + '. If it doesn\'t, write to ' + mailLink(box.email) + '.');
       return;
     }
 
-    data.set('access_key', SITE.web3formsKey);
+    data.set('access_key', box.key);
+    data.delete('mailbox');
     button.disabled = true;
     show('', 'Sending...');
     try {
@@ -111,9 +139,10 @@ if (form) {
       const json = await res.json().catch(() => ({}));
       if (!res.ok || !json.success) throw new Error(json.message || 'HTTP ' + res.status);
       form.reset();
-      show('ok', 'Thanks! Your message is on its way. We\'ll reply by email.');
+      pickBox(boxName); // keep the same mailbox picked after reset()
+      show('ok', 'Thanks! Your message is on its way to ' + box.email + '. We\'ll reply by email.');
     } catch (err) {
-      show('error', 'Sorry, the message could not be sent (' + String(err.message).replace(/[<>&]/g, '') + '). Please try again or email ' + mailLink + '.');
+      show('error', 'Sorry, the message could not be sent (' + String(err.message).replace(/[<>&]/g, '') + '). Please try again or email ' + mailLink(box.email) + '.');
     } finally {
       button.disabled = false;
     }

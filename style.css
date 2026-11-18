@@ -180,6 +180,24 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(30px, 4.4vw
 
 /* ---------- contact form ---------- */
 #contact { padding-top: 0; }
+/* mailbox picker (left) + form (right) */
+.contact-wrap { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 24px; align-items: start; }
+.mailboxes { display: grid; gap: 12px; }
+.mailbox { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; cursor: pointer; font: inherit; color: var(--text);
+           background: var(--paper); border: 3px solid var(--edge); border-radius: 18px; padding: 12px 14px; box-shadow: 0 4px 0 var(--edge);
+           transition: transform .08s, box-shadow .08s; }
+.mailbox:hover { transform: translateY(2px); box-shadow: 0 2px 0 var(--edge); }
+.mailbox[aria-pressed="true"] { background: var(--go); color: var(--ink); }
+.mailbox b { display: block; font-family: var(--display); font-weight: 400; font-size: 19px; letter-spacing: .4px; line-height: 1.15; }
+.mailbox small { display: block; font-size: 13px; font-weight: 800; color: var(--muted); overflow-wrap: anywhere; }
+.mailbox[aria-pressed="true"] small { color: var(--ink); }
+.mb-ico { flex: none; width: 42px; height: 42px; display: grid; place-items: center; border: 2px solid var(--edge); border-radius: 12px; background: var(--soft); color: var(--text); }
+.mailbox[aria-pressed="true"] .mb-ico { background: #fff; color: var(--ink); }
+.mb-ico svg { width: 24px; height: 24px; }
+.fine.direct { max-width: none; padding: 2px 4px; }
+.sending-to { margin: 0; font-weight: 800; color: var(--muted); display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.to-chip { background: var(--mint); color: var(--text); border: 2px solid var(--edge); border-radius: 999px; padding: 3px 12px; font-size: 15px; overflow-wrap: anywhere; }
+.contact-wrap .contact { max-width: none; margin: 0; }
 .contact { max-width: 760px; margin: 0 auto; padding: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px 20px; }
 .contact .wide { grid-column: 1 / -1; }
 .field { display: flex; flex-direction: column; gap: 6px; }
@@ -285,6 +303,7 @@ footer { background: var(--foot-bg); color: #c9d0ea; font-size: 14px; padding: 3
   .fan .burst { right: 0; font-size: 16px; padding: 8px 14px; }
   .legal { padding: 24px 20px 28px; margin-top: 24px; }
   .contact { grid-template-columns: 1fr; padding: 22px 18px; }
+  .contact-wrap { grid-template-columns: 1fr; gap: 20px; }
   .form-foot .btn { width: 100%; text-align: center; }
 }
 
@@ -300,5 +319,5 @@ footer { background: var(--foot-bg); color: #c9d0ea; font-size: 14px; padding: 3
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .btn, .theme-btn { transition: none; }
+  .btn, .theme-btn, .mailbox { transition: none; }
 }

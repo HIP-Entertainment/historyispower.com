@@ -174,15 +174,40 @@
     <div class="wrap">
       <div class="sec-head">
         <h2>Contact us</h2>
-        <p>Questions, bug reports, business or press: send us a message and we'll reply by email.</p>
+        <p>Pick who to write to, and we'll reply by email.</p>
       </div>
-      <!-- CONTACT FORM: sent through Web3Forms. The access key is set in script.js (SITE.web3formsKey). -->
+      <!-- CONTACT: the visitor picks a mailbox on the left, the form on the right sends to it through Web3Forms.
+           Each mailbox has its own access key in script.js (SITE.mailboxes). A mailbox without a key opens the
+           visitor's email app addressed to that mailbox instead. To add a mailbox: add a button here and an entry there. -->
+      <div class="contact-wrap">
+        <div class="mailboxes" role="group" aria-label="Choose who to write to">
+          <button class="mailbox" type="button" data-box="support" aria-pressed="false">
+            <span class="mb-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M5.6 5.6l3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"/></svg></span>
+            <span><b>Help and bugs</b><small>support@historyispower.com</small></span>
+          </button>
+          <button class="mailbox" type="button" data-box="feedback" aria-pressed="true">
+            <span class="mb-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M12 13.2l-2.4-2.3a1.5 1.5 0 1 1 2.4-1.8 1.5 1.5 0 1 1 2.4 1.8z"/></svg></span>
+            <span><b>Game feedback</b><small>feedback@historyispower.com</small></span>
+          </button>
+          <button class="mailbox" type="button" data-box="contact" aria-pressed="false">
+            <span class="mb-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18"/></svg></span>
+            <span><b>Business inquiries</b><small>contact@historyispower.com</small></span>
+          </button>
+          <p class="fine direct">Prefer your own email app? Write to
+            <a href="mailto:support@historyispower.com">support@</a>,
+            <a href="mailto:feedback@historyispower.com">feedback@</a> or
+            <a href="mailto:contact@historyispower.com">contact@</a> followed by historyispower.com.</p>
+        </div>
+
       <form class="contact panel" id="contact-form" action="https://api.web3forms.com/submit" method="POST">
         <input type="hidden" name="access_key" value="">
         <input type="hidden" name="subject" value="Website message">
         <input type="hidden" name="from_name" value="HistoryIsPower website">
+        <input type="hidden" name="mailbox" value="feedback">
         <!-- spam trap: people never see or tick this box -->
         <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <p class="sending-to wide">Sending to <b class="to-chip" id="to-chip">feedback@historyispower.com</b></p>
 
         <div class="field">
           <label for="cf-name">Your name</label>
@@ -193,15 +218,6 @@
           <input id="cf-email" name="email" type="email" autocomplete="email" maxlength="200" required>
         </div>
         <div class="field wide">
-          <label for="cf-topic">Topic</label>
-          <select id="cf-topic" name="topic">
-            <option>General question</option>
-            <option>Bug report</option>
-            <option>Business</option>
-            <option>Press</option>
-          </select>
-        </div>
-        <div class="field wide">
           <label for="cf-message">Message</label>
           <textarea id="cf-message" name="message" rows="6" maxlength="5000" required></textarea>
         </div>
@@ -210,8 +226,9 @@
           <button class="btn go" type="submit">Send message</button>
         </div>
         <p class="form-status wide" role="status" aria-live="polite"></p>
-        <noscript><p class="form-status wide is-error">The form needs JavaScript. You can email us at <a href="mailto:hipentr@gmail.com">hipentr@gmail.com</a> instead.</p></noscript>
+        <noscript><p class="form-status wide is-error">The form needs JavaScript. You can email us at one of the addresses on the left instead.</p></noscript>
       </form>
+      </div>
     </div>
   </section>
 </main>
@@ -223,7 +240,7 @@
       <a href="privacy-policy.html">Privacy policy</a>
       <a href="terms-of-service.html">Terms of service</a>
       <a href="delete-data.html">Delete your data</a>
-      <a href="mailto:hipentr@gmail.com">Contact: hipentr@gmail.com</a>
+      <a href="mailto:contact@historyispower.com">Contact: contact@historyispower.com</a>
     </nav>
   </div>
 </footer>
