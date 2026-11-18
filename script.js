@@ -9,9 +9,9 @@
 // ---------------------------------------------------------------------------
 const SITE = {
   mailboxes: {
-    support:  { email: 'support@historyispower.com',  label: 'Help and bugs',      key: '' },
-    feedback: { email: 'feedback@historyispower.com', label: 'Game feedback',      key: '' },
-    contact:  { email: 'contact@historyispower.com',  label: 'Business inquiries', key: '' },
+    support:  { email: 'support@historyispower.com',  label: 'Help and bugs',      key: 'a1323302-212a-4812-b6f6-24c5e574e9e8' },
+    feedback: { email: 'feedback@historyispower.com', label: 'Game feedback',      key: '76f0e748-5b05-41fc-a46d-fee007cd22d0' },
+    contact:  { email: 'contact@historyispower.com',  label: 'Business inquiries', key: '' }, // no key yet (free plan: 3 recipients): opens the visitor's email app
   },
   defaultMailbox: 'feedback',
   cfBeaconToken: '',
